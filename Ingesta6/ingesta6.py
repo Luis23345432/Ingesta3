@@ -3,16 +3,19 @@ import csv
 import os
 import time
 
+# Leer la variable de entorno `STAGE` (por defecto será 'dev' si no está configurada)
+stage = os.getenv('STAGE', 'dev')  # Default to 'dev' if no environment variable is set
+
+# Configuración dinámica según el stage (dev, test, prod)
+tabla_dynamo = f'{stage}-hotel-payments'  # Ejemplo: dev-hotel-payments, test-hotel-payments, prod-hotel-payments
+nombre_bucket = f'{stage}-ingesta-hotel-stage'  # Ejemplo: ingesta-hotel-stage-dev, ingesta-hotel-stage-test, ingesta-hotel-stage-prod
+archivo_csv = f'{stage}-payments.csv'  # Ejemplo: dev-payments.csv, test-payments.csv, prod-payments.csv
+glue_database = f'stage-{stage}'  # Ejemplo: stage-dev, stage-test, stage-prod
+glue_table_name = f'stage-{stage}-payments'  # Ejemplo: stage-dev-payments, stage-test-payments, stage-prod-payments
+
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 s3 = boto3.client('s3', region_name='us-east-1')
 glue = boto3.client('glue', region_name='us-east-1')
-
-tabla_dynamo = 'dev-hotel-payments'  # Tabla de pagos
-nombre_bucket = 'ingesta-hotel-stage-dev'
-archivo_csv = 'stage-prod-payments.csv'
-glue_database = 'stage-prod'
-glue_table_name = 'stage-prod-payments'
-
 
 def exportar_dynamodb_a_csv(tabla_dynamo, archivo_csv):
     print(f"Exportando datos desde DynamoDB ({tabla_dynamo})...")
