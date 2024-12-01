@@ -9,6 +9,16 @@ fi
 # Asignar el valor del entorno
 STAGE=$1  # El valor será --dev, --test, o --prod
 
+# Pedir el nombre del bucket
+echo "Por favor ingresa el nombre del bucket para subir las ingestas:"
+read S3_BUCKET
+
+# Verificar si el bucket fue proporcionado
+if [ -z "$S3_BUCKET" ]; then
+    echo "No se proporcionó un nombre de bucket. El proceso se detendrá."
+    exit 1
+fi
+
 # Definir las carpetas y las imágenes Docker (diccionario)
 declare -A carpetas
 carpetas=(
@@ -32,9 +42,9 @@ for carpeta in "${!carpetas[@]}"; do
   # Construir la imagen Docker
   docker build -t $imagen .
 
-  # Ejecutar el contenedor Docker pasando el entorno como variable de entorno
+  # Ejecutar el contenedor Docker pasando las variables de entorno STAGE y S3_BUCKET
   echo "Corriendo el contenedor para $carpeta con la imagen $imagen..."
-  docker run -v /home/ubuntu/.aws/credentials:/root/.aws/credentials -e STAGE=$STAGE $imagen
+  docker run -v /home/ubuntu/.aws/credentials:/root/.aws/credentials -e STAGE=$STAGE -e S3_BUCKET=$S3_BUCKET $imagen
 
   # Volver al directorio anterior
   cd ..
