@@ -8,10 +8,11 @@ stage = os.getenv('STAGE', 'dev')  # Default to 'dev' if no environment variable
 
 # Configuración dinámica según el stage
 tabla_dynamo = f'{stage}-hotel-users'  # Ejemplo: dev-hotel-users, test-hotel-users, prod-hotel-users
-nombre_bucket = f'ingesta-hotel-stage-{stage}'  # Ejemplo: ingesta-hotel-stage-dev, ingesta-hotel-stage-test, ingesta-hotel-stage-prod
+nombre_bucket = f'{stage}-ingesta-hotel-stage'  # Ejemplo: ingesta-hotel-stage-dev, ingesta-hotel-stage-test, ingesta-hotel-stage-prod
 archivo_csv = f'{stage}-usuarios.csv'  # Ejemplo: dev-usuarios.csv, test-usuarios.csv, prod-usuarios.csv
 glue_database = f'stage-{stage}'  # Ejemplo: stage-dev, stage-test, stage-prod
 glue_table_name = f'stage-{stage}-usuarios'  # Ejemplo: stage-dev-usuarios, stage-test-usuarios, stage-prod-usuarios
+
 
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
