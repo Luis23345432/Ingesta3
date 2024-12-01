@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Verificar que se pase un argumento para el stage
+if [ -z "$1" ]; then
+    echo "Por favor, especifica un entorno: --dev, --test, o --prod"
+    exit 1
+fi
+
+# Asignar el valor del entorno
+STAGE=$1  # El valor será --dev, --test, o --prod
+
 # Definir las carpetas y las imágenes Docker (diccionario)
 declare -A carpetas
 carpetas=(
@@ -23,9 +32,9 @@ for carpeta in "${!carpetas[@]}"; do
   # Construir la imagen Docker
   docker build -t $imagen .
 
-  # Ejecutar el contenedor Docker
+  # Ejecutar el contenedor Docker pasando el entorno como variable de entorno
   echo "Corriendo el contenedor para $carpeta con la imagen $imagen..."
-  docker run -v /home/ubuntu/.aws/credentials:/root/.aws/credentials $imagen
+  docker run -v /home/ubuntu/.aws/credentials:/root/.aws/credentials -e STAGE=$STAGE $imagen
 
   # Volver al directorio anterior
   cd ..
